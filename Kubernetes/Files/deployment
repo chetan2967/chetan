@@ -5,41 +5,47 @@ metadata:
   labels:
     app: nginx
 spec:
+  ##### creating Replicas #####
   replicas: 3
   selector:
     matchLabels:
       app: nginx
+  ##### Creating a Pod template #####
   template:
     metadata:
       labels:
         app: nginx
     spec:
       containers:
-      - name: nginx
+    # - name: nginx
         image: nginx:1.14.2
         ports:
-       (- name: nginx) 
+      # - name: nginx
           containerPort: 80 
           protocol: TCP
         resources: 
-        requests: 
-          memory: "128Mi" 
-          cpu: "250m" 
-        limits: 
-          memory: "256Mi" 
-          cpu: "500m"
+          requests: 
+            memory: "128Mi" 
+            cpu: "250m" 
+          limits: 
+            memory: "256Mi" 
+            cpu: "500m"
 
 =============================================================================================== 
-Command : 
-kubectl apply –f deployment-definition.yml : create
-kubectl delete deployment <deployment-name> : delete
-kubectl get deployments : get list of deployments
-================================================================================================= 
-Replicas 
-Rolling Updates 
-Roll back 
-Scaling  
-Self healing  
+Create Deployment using YAML File : 
+  Create  : kubectl apply –f deployment-definition.yml
+  Delete  : kubectl delete deployment <deployment-name>
+
+Create Deployment using Command :
+  create a Deployment           : kubectl create deployment --image=nginx nginx
+  Generate Deployment YAML file : kubectl create deployment --image=nginx nginx --dry-run=client -o yaml > nginx-deployment.yaml
+    --dry-run=client: Ensures the command only simulates the creation and does not send anything to the Kubernetes API server.
+    -o yaml: Outputs the deployment definition in YAML format.
+
+List    : kubectl get deployments/replicaset/pods
+Describe: kubectl describe deployment <deployment-name>
+
+Roll Out  : kubectl rollout undo deployment my-app-deployment
 ================================================================================================
  
 kubectl get all - To see all the created objects at once 
@@ -48,4 +54,3 @@ kubectl set image deployment/myapp-deployment \ nginx=nginx:1.9.1
 Roll Out Status Commands :  
 kubectl rollout status deployment/myapp-deployment 
 kubectl rollout history deployment/myapp-deployment 
-kubectl rollout undo deployment/myapp-deployment : roll back 
