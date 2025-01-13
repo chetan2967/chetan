@@ -1,0 +1,53 @@
+kubectl get all
+kubectl get all --all-namespaces
+=====================================================================================
+kubectl api-resources : to list all apis present 
+=====================================================================================
+Name Spaces :
+
+-n <namespace>
+–all-namespaces : to list resources in all namespaces
+
+kubectl config set-context --current --namespace=<my-namespace>
+kubectl get namespaces/ns : to list all namespaces in a cluster 
+=====================================================================================
+Nodes :
+
+kubectl get nodes : to list all the nodes in a cluster 
+kubectl top node  : shows node level cpu and memory usage 
+======================================================================================
+kubectl get pods -o wide : to display additional information about the pods
+kubectl get replicaset   : to list replicas
+kubectl get deployments  : to list Deployments
+kubectl get svc/services : to list services
+======================================================================================
+kubectl describe <resource-type> <resource-name>  : For detailed information about a resource
+
+kubectl get <resource-type> <resource-name> -o yaml  : To retrieve the full YAML/JSON definition of a resource
+
+kubectl get events        : to list cluster events
+kubectl logs <pod-name>   : Retrieve logs for a specific pod
+========================================================================================
+Listing based on STATUS : 
+Pending - ; Failed – Error; Running; Succeeded – Completed; Unknown - ; ContainerCreating; ImagePullBackOff; 
+
+kubectl get pods --field-selector=status.phase=Running
+kubectl get pods --field-selector=status.phase!=Succeeded
+
+kubectl get pods --field-selector=status.phase=Running,status.phase=Failed (multiple states)
+
+kubectl get pods --field-selector=status.phase=Running --sort-by=.metadata.creationTimestamp 
+-------------------------------------------------------------------------------------------- 
+Listing based on NAME : 
+kubectl get pods | findstr cacsweb
+--------------------------------------------------------------------------------------------- 
+Listing based on AGE : 
+kubectl get pods --sort-by=.metadata.creationTimestamp 
+-------------------------------------------------------------------------------------------- 
+Listing based on LABELS : 
+kubectl get pods -l app=frontend
+kubectl get pods -l env=prod,app=my-app (multiple labels)
+==============================================================================================
+List containers inside a pod : 
+kubectl get pod example-pod -n usaa-cacs-dev -o jsonpath='{.spec.containers[*].name}' 
+
