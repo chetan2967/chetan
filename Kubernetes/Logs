@@ -1,0 +1,31 @@
+Logs:
+
+kubectl logs <pod-name>
+
+-f               : Use the -f (follow) flag for Streaming Logs in Real-Time
+<container-name> : For a specific container in a pod
+--all-containers : For logs from all containers in a pod
+--since=1h	     : View logs for a specific time range
+
+kubectl logs -l app=<app_label> : View logs across multiple pods (with label selectors)
+=====================================================================================================
+Aggregated Logs with Logging Systems
+For large-scale Kubernetes clusters, managing logs directly from pods can be inefficient. Use centralized logging solutions to collect, store, and analyze logs.
+
+Popular Kubernetes Logging Tools:
+ELK Stack (Elasticsearch, Logstash, Kibana):
+Collect and index logs with Logstash.
+Store logs in Elasticsearch.
+Visualize and analyze logs in Kibana.
+
+Fluentd/Fluent Bit:
+Used to forward logs to various backends like Elasticsearch, Splunk, or cloud logging services.
+
+Promtail with Loki (Grafana):
+Promtail collects logs and sends them to Loki.
+Loki stores logs efficiently, and you can visualize them with Grafana.
+
+Cloud Provider Logging:
+Google Kubernetes Engine (GKE): Use Google Cloud Logging.
+Amazon Elastic Kubernetes Service (EKS): Use CloudWatch.
+Azure Kubernetes Service (AKS): Use Azure Monitor.
