@@ -1,0 +1,35 @@
+Metrics Server :
+==========================================================================================================
+Display resource usage of nodes or pods.
+
+kubectl top nodes
+kubectl top pods
+==========================================================================================================
+Installing Metrics Server :
+---------------------------------------------------------------------------
+Using YAML Manifest:
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl get deployment metrics-server -n kube-system
+kubectl top nodes
+kubectl top pods
+-----------------------------------------------------------------------------
+Using Helm:
+
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+helm repo update
+helm install metrics-server metrics-server/metrics-server
+----------------------------------------------------------------------------
+For Minikube:
+
+minikube addons enable metrics-server
+=========================================================================================================
+Concepts :
+
+It is add-on in Kubernetes that collects resource metrics such as CPU and memory usage from nodes and pods.
+
+API Integration: Integrates with the Kubernetes API to serve metrics.
+
+Kubelet
+cadvinsor (container advisor) - sub component of kubelet
+
