@@ -1,0 +1,39 @@
+Performing a Rolling Update:
+
+Update the Deployment: Modify the image or other configuration in the Deployment YAML file and apply the changes:
+kubectl apply -f deployment.yaml
+(Or)
+update the image directly:
+kubectl set image deployment/<deployment_name> <container_name>=<new_image>
+---------------------------------------------------------------------------------------------
+Monitor the Update: Check the status of the rollout:
+
+kubectl rollout status <deployment_name>
+---------------------------------------------------------------------------------------------
+Control the Update Speed: Use the strategy field in the Deployment to control the rollout behavior:
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1       # Maximum number of extra Pods created during the update
+    maxUnavailable: 1 # Maximum number of Pods unavailable during the update
+
+================================================================================================================================
+
+Rollbacks
+A rollback allows you to revert a Deployment to a previous stable state if something goes wrong during or after a rollout.
+
+Rollback to the Previous Version:
+
+kubectl rollout undo <deployment_name>
+-------------------------------------------------------------------
+Rollback to a Specific Revision: 
+
+View the revision history:
+kubectl rollout history <deployment_name>
+
+Then rollback to a specific revision:
+kubectl rollout undo <deployment_name> --to-revision=<revision_number>
+
+Check the Rollback Status:
+kubectl rollout status <deployment_name>
