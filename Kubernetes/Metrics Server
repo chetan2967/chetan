@@ -13,6 +13,10 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 kubectl get deployment metrics-server -n kube-system
 kubectl top nodes
 kubectl top pods
+
+From kodekloud:
+git clone https://github.com/kubernetes-incubator/metrics-server.git
+kubectl create –f deploy/1.8+/
 -----------------------------------------------------------------------------
 Using Helm:
 
