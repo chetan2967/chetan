@@ -1,0 +1,62 @@
+ConfigMaps:
+
+ConfigMaps are used to store configuration data in the form of key-value pairs. 
+
+Storing configuration settings like database connection strings or API keys.
+
+Key-Value Pair Storage: ConfigMaps store data as key-value pairs, which can represent configuration files, command-line arguments, or environment variables.
+
+Multiple Ways to Access: ConfigMaps can be accessed by pods in various ways, such as environment variables, command-line arguments, or mounted as files.
+
+Namespace Scoped: ConfigMaps are scoped to a namespace, meaning they are only accessible within the namespace where they are created.
+
+====================================================================================================================================================
+
+Creating :
+------------------------------------------------------------------------------------------------
+
+Using command :
+
+kubectl create configmap my-config --from-literal=key1=value1 --from-literal=key2=value2
+
+-------------------------------------------------------------------------------------------------
+
+Using YAML file :
+
+kubectl apply -f configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config/mysql-config/redis-config
+  namespace: default
+data:
+  LOG4J_FORMAT_MSG_NO_LOOKUPS: "true"
+  csf.ssl.keystore.alias: "cgi-ak-client-test.usaab2b.com"
+  http_proxy: "http://10.160.0.110:8080"
+  database-url: "jdbc:mysql://example-database:3306/mydb"
+  CACS_BATCH_TEST_DATA_DIR: "/apps/c360/CACS/data/test/regression"
+  CACS_CACTUS_JOB_OUTPUT_PATH: "/apps/c360/logs"
+  CACS_RECOVERY_ACCOUNTING_INSTALLED: "true"
+
+====================================================================================================================================================
+
+Using ConfigMap in Pods:
+----------------------------------------------------------------------------------------------
+As Environment Variables:
+
+valueFrom:
+  configMapKeyRef:
+    name: my-config
+    key: key1
+
+---------------------------------------------------------------------------------------------------
+
+volumes:
+- name: config-volume
+  configMap:
+    name: my-config
+
+This will make the ConfigMap keys and values available as files under /etc/config.
+
+
