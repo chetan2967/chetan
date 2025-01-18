@@ -1,0 +1,133 @@
+Cluster Maintenance:
+=====================================================================================================================================
+
+OS Upgrades(for Nodes):
+
+kubectl drain <node-1> <--ignore-daemonsets> <--force> : pods from that node are terminated and will create on some other nodes.
+node is also marked as unscheduled(no pods are scheduled on that node until restriction is removed)
+
+Note: If any pod not managed by any blow the pod will delete permanently.
+Error: cannot delete pods not managed by Replicationcontroller, ReplicaSet, Job, DaemonSet or StatefulSet
+
+kubectl cordon <node> : stops scheduling new pods on the node
+
+kubectl uncordon <node-1> : to start scheduling pods after maintenance. only new pods scheduled on it.
+
+=====================================================================================================================================
+
+Kubernetes Software versions :
+
+v1.11.3(Major, Minor(Features, Functionalities), Patch versions(bug fixes))
+v1.10.0-alpha release & v1.10.0-beta release
+
+The below all with maintain same versions.
+kube-apiserver, controller-manager, kube-scheduler, kubelet, kube-proxy, kubectl
+ETCD cluster and CoreDNS maintain separate releases
+
+Kubernetes supports up to latest 3 versions and older versions will be in un-supported.
+
+kubectl(v1.11/v1.10/v1.09):
+
+Kube-apiserver(v1.10):
+since kube-apiserver is the primary component taking to other components. None of the other components should not be higher version than apiserver exctpt kubectl.
+
+Controller-manager & Kube-scheduler(v1.09/v1.10):
+can be at one version lower or same as kube-apiserver
+
+kubelet and kube-proxy(v1.08/v1.09/v1.10):
+can be at two versions lower or above
+
+=====================================================================================================================================
+
+Cluster Upgrade Process :
+-------------------------
+
+cat /etc/*release* : used to check OS and version
+
+goto Documentation : https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+sudo apt update			: This command updates the local package index on your system
+
+sudo apt-cache madison kubeadm	: used to list the versions of a package that are available in the repositories configured on your system.
+   kubeadm | 1.26.0-00 | http://apt.kubernetes.io/ kubernetes-xenial/main amd64 Packages
+   kubeadm | 1.25.3-00 | http://apt.kubernetes.io/ kubernetes-xenial/main amd64 Packages
+   kubeadm | 1.24.8-00 | http://apt.kubernetes.io/ kubernetes-xenial/main amd64 Packages
+
+**********************************************************************************************************************************
+
+*** First Update Control Plane Node: ***
+----------------------------------------
+
+Upgrade Kubeadm:
+----------------
+# replace x in 1.31.x-* with the latest patch version
+sudo apt-mark unhold kubeadm && \
+sudo apt-get update && sudo apt-get install -y kubeadm='1.31.x-*' && \
+sudo apt-mark hold kubeadm
+
+kubeadm version			   : Verify that the download works and has the expected version
+sudo kubeadm upgrade plan	   : Verify the upgrade plan
+sudo kubeadm upgrade apply v1.31.x :
+
+sudo kubeadm upgrade node	   : For the other control plane nodes same as the first control plane node but use this instead of apply command
+
+Upgrade kubelet and kubectl: 
+----------------------------
+# replace x in 1.31.x-* with the latest patch version
+sudo apt-mark unhold kubelet kubectl && \
+sudo apt-get update && sudo apt-get install -y kubelet='1.31.x-*' kubectl='1.31.x-*' && \
+sudo apt-mark hold kubelet kubectl
+
+Restart the kubelet:
+--------------------
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+Uncordon the node. Bring the node back online by marking it schedulable
+
+******************************************************************************************************************************
+
+*** Upgrade worker nodes ***
+----------------------------
+
+Update all worker Nodes at a time : during this pods won't run
+Update nodes one by one           : moving pods to other worker nodes
+Create a new worker node with updated version and move all pods to new node and decommision the old version node.
+
+Drain the worker nodes and mark it has unschedulable
+
+ssh <node_name/IP>  : switch to worker node
+
+Upgrade kubeadm:
+----------------
+# replace x in 1.31.x-* with the latest patch version
+sudo apt-mark unhold kubeadm && \
+sudo apt-get update && sudo apt-get install -y kubeadm='1.31.x-*' && \
+sudo apt-mark hold kubeadm
+
+sudo kubeadm upgrade node : For worker nodes this upgrades the local kubelet configuration
+
+Upgrade kubelet and kubectl:
+----------------------------
+# replace x in 1.31.x-* with the latest patch version
+sudo apt-mark unhold kubelet kubectl && \
+sudo apt-get update && sudo apt-get install -y kubelet='1.31.x-*' kubectl='1.31.x-*' && \
+sudo apt-mark hold kubelet kubectl
+
+Restart the kubectl:
+--------------------
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+===================================================================================================================================
+
+apt-get upgrade -y kubeadm=1.12.0-00
+apt-get upgrade -y kubelet=1.12.0-00
+kubeadm upgrade apply v1.12.0 (Master)
+kubeadm upgrade node config --kubelet-version v1.12.0
+systemctl restart kubelet
+
+==============================================================================================================================================
+
+Backup & Restore Methods:
+
